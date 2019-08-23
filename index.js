@@ -41,7 +41,9 @@ const micromatch = (list, patterns, options) => {
   };
 
   for (let i = 0; i < patterns.length; i++) {
-    let isMatch = picomatch(String(patterns[i]), { ...options, onResult }, true);
+    const newOptions = Object.assign({}, options ? options : {});
+    newOptions.onResult = onResult;
+    let isMatch = picomatch(String(patterns[i]), newOptions, true);
     let negated = isMatch.state.negated || isMatch.state.negatedExtglob;
     if (negated) negatives++;
 
@@ -204,7 +206,7 @@ micromatch.contains = (str, pattern, options) => {
     }
   }
 
-  return micromatch.isMatch(str, pattern, { ...options, contains: true });
+  return micromatch.isMatch(str, pattern, Object.assign(options ? options : {}, { contains: true }));
 };
 
 /**
@@ -360,7 +362,7 @@ micromatch.all = (str, patterns, options) => {
 
 micromatch.capture = (glob, input, options) => {
   let posix = utils.isWindows(options);
-  let regex = picomatch.makeRe(String(glob), { ...options, capture: true });
+  let regex = picomatch.makeRe(String(glob), Object.assign(options ? options : {}, { capture: true }));
   let match = regex.exec(posix ? utils.toPosixSlashes(input) : input);
 
   if (match) {
@@ -457,7 +459,7 @@ micromatch.braces = (pattern, options) => {
 
 micromatch.braceExpand = (pattern, options) => {
   if (typeof pattern !== 'string') throw new TypeError('Expected a string');
-  return micromatch.braces(pattern, { ...options, expand: true });
+  return micromatch.braces(pattern, Object.assign(options ? options : {}, { expand: true }));
 };
 
 /**
