@@ -157,7 +157,9 @@ micromatch.not = (list, patterns, options = {}) => {
     items.push(state.output);
   };
 
-  let matches = micromatch(list, patterns, { ...options, onResult });
+  const newOptions = Object.assign({}, options ? options : {});
+  newOptions.onResult = onResult;
+  let matches = micromatch(list, patterns, newOptions);
 
   for (let item of items) {
     if (!matches.includes(item)) {
